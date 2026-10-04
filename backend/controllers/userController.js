@@ -19,6 +19,23 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.getUser = async (req, res) => {
+  try {
+    const user = await Login.findById(req.params.id);
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
+
 exports.createUser = async (req, res) => {
   try {
     const newUser = await Login.create(req.body);
@@ -47,8 +64,23 @@ exports.updateUser = async (req, res) => {
     res.status(200).json({
       status: "success",
       data: {
-        user
+        user,
       },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    await Login.findByIdAndDelete(req.params.id);
+    res.status(204).json({
+      status: "success",
+      data: null,
     });
   } catch (err) {
     res.status(404).json({
