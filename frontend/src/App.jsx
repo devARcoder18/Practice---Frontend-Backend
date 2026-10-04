@@ -262,7 +262,7 @@ function App() {
           </h1>
 
           <p className="mt-2 text-slate-400">
-            React + Tailwind CSS + Express + MongoDB
+            React + Nodejs + Express + MongoDB
           </p>
         </div>
 
