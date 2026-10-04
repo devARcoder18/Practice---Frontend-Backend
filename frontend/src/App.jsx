@@ -17,6 +17,12 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   // =========================
+  // SEARCH
+  // =========================
+
+  const [search, setSearch] = useState("");
+
+  // =========================
   // FORM INPUT
   // =========================
 
@@ -25,6 +31,42 @@ function App() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  // =========================
+  // SEARCH USERS
+  // =========================
+
+  const searchUsers = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (search.trim()) {
+        params.append("username", search.trim());
+      }
+
+      const response = await fetch(`${API_URL}?${params.toString()}`);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error("Failed to search users");
+      }
+
+      setUsers(data.data.users);
+    } catch (error) {
+      console.error(error);
+      setMessage(error.message);
+    }
+  };
+
+  // =========================
+  // CLEAR SEARCH
+  // =========================
+
+  const clearSearch = () => {
+    setSearch("");
+    getUsers();
   };
 
   // =========================
@@ -204,10 +246,11 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
-
       <div className="mx-auto max-w-6xl">
 
-        {/* HEADER */}
+        {/* =========================
+            HEADER
+        ========================= */}
 
         <div className="mb-8">
           <p className="mb-2 text-sm font-medium text-blue-400">
@@ -223,7 +266,9 @@ function App() {
           </p>
         </div>
 
-        {/* MESSAGE */}
+        {/* =========================
+            MESSAGE
+        ========================= */}
 
         {message && (
           <div className="mb-6 rounded-xl border border-slate-800 bg-slate-900 p-4 text-sm text-slate-300">
@@ -231,7 +276,9 @@ function App() {
           </div>
         )}
 
-        {/* MAIN GRID */}
+        {/* =========================
+            MAIN GRID
+        ========================= */}
 
         <div className="grid gap-6 lg:grid-cols-5">
 
@@ -331,25 +378,63 @@ function App() {
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl lg:col-span-3">
 
-            <div className="mb-6 flex items-center justify-between">
+            {/* USERS HEADER */}
 
-              <div>
-                <h2 className="text-xl font-semibold">
-                  All Users
-                </h2>
+            <div className="mb-6">
 
-                <p className="mt-1 text-sm text-slate-400">
-                  Users stored in MongoDB
-                </p>
+              <div className="flex items-center justify-between">
+
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    All Users
+                  </h2>
+
+                  <p className="mt-1 text-sm text-slate-400">
+                    Users stored in MongoDB
+                  </p>
+                </div>
+
+                <div className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1 text-sm text-slate-300">
+                  {users.length} Users
+                </div>
+
               </div>
 
-              <div className="rounded-full border border-slate-700 bg-slate-950 px-3 py-1 text-sm text-slate-300">
-                {users.length} Users
+              {/* =========================
+                  SEARCH
+              ========================= */}
+
+              <div className="mt-5 flex gap-2">
+
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search username..."
+                  className="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                />
+
+                <button
+                  onClick={searchUsers}
+                  className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-500"
+                >
+                  Search
+                </button>
+
+                <button
+                  onClick={clearSearch}
+                  className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-slate-300 transition hover:bg-slate-800"
+                >
+                  Clear
+                </button>
+
               </div>
 
             </div>
 
-            {/* USER LIST */}
+            {/* =========================
+                USER LIST
+            ========================= */}
 
             <div className="space-y-3">
 
@@ -464,6 +549,8 @@ function App() {
 
             <div className="grid gap-4 sm:grid-cols-3">
 
+              {/* USERNAME */}
+
               <div className="rounded-xl bg-slate-950 p-4">
                 <p className="text-xs text-slate-500">
                   Username
@@ -474,6 +561,8 @@ function App() {
                 </p>
               </div>
 
+              {/* EMAIL */}
+
               <div className="rounded-xl bg-slate-950 p-4">
                 <p className="text-xs text-slate-500">
                   Email
@@ -483,6 +572,8 @@ function App() {
                   {selectedUser.email}
                 </p>
               </div>
+
+              {/* USER ID */}
 
               <div className="rounded-xl bg-slate-950 p-4">
                 <p className="text-xs text-slate-500">

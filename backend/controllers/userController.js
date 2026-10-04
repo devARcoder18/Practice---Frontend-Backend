@@ -2,10 +2,20 @@ const Login = require("./../models/loginModel");
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await Login.find();
+    const queryObj = {};
+
+    if (req.query.username) {
+      queryObj.username = req.query.username;
+    }
+
+    if (req.query.email) {
+      queryObj.email = req.query.email;
+    }
+
+    const users = await Login.find(queryObj);
 
     res.status(200).json({
-      sattus: "success",
+      status: "success",
       results: users.length,
       data: {
         users,
@@ -18,6 +28,32 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+// exports.getAllUsers = async (req, res) => {
+//   try {
+//     const queryObj = { ...req.query };
+//     const excludeFields = ["page", "sort", "limit", "fields"];
+//     excludeFields.forEach((el) => delete queryObj[el]);
+
+//     const query = await Login.find(queryObj);
+//     const users = await query;
+
+//     // const users = await Login.find();
+
+//     res.status(200).json({
+//       sattus: "success",
+//       results: users.length,
+//       data: {
+//         users,
+//       },
+//     });
+//   } catch (err) {
+//     res.status(404).json({
+//       status: "fail",
+//       message: err,
+//     });
+//   }
+// };
 
 exports.getUser = async (req, res) => {
   try {
